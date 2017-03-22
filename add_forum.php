@@ -51,19 +51,35 @@ while($row = $result->fetch_assoc()){
 }
 ?>
 
+<?php
+    // 获取修改信息
+    $id = isset($_GET['id']) ? $_GET['id'] :0;
+    $update_info = "SELECT plate_name,class_name,class_id FROM db_javalearning.tb_plate where id=$id;";
+    $res = $mysqli->query($update_info);
+    $update_row = $res->fetch_assoc();
+
+?>
+
 <?php 
+    // 新增或修改提交
 	if($_POST){
+        $edit_id = $_POST['id'] ? $_POST['id'] :0;
 		$plate_name = isset($_POST['plate_name']) ? trim($_POST['plate_name']) : '';
 		$class_id = isset($_POST['class']) ? trim($_POST['class']) : '';
 		$class_name = isset($_POST['class_name']) ? trim($_POST['class_name']) : '';
 		$time = time();
-		$querys = "insert into tb_plate values(null,".$user_id.",'".$plate_name."',".$class_id.",'".$class_name."',".$time.",0)";
+        if($edit_id){ // 修改
+            //$querys = "insert into tb_plate values(null,".$user_id.",'".$plate_name."',".$class_id.",'".$class_name."',".$time.",0)";
+        }else{ // 添加
+            $querys = "insert into tb_plate values(null,".$user_id.",'".$plate_name."',".$class_id.",'".$class_name."',".$time.",0)";
+        }
+		
 		
 		$res = $mysqli->query($querys);
 		if($res){
 			header("Location: view_forum.php"); 
 		}else{
-			exit('添加失败！');
+			exit('操作失败！');
 		}
 
 	}
@@ -81,7 +97,7 @@ while($row = $result->fetch_assoc()){
         <tr class="haotr">
             <td class="haotd1">版块名</td>
             <td class="haotd2">
-            	<input type="text" name="plate_name" id="plate_name" value="" style="width:120px"/>
+            	<input type="text" name="plate_name" id="plate_name" value="<?php echo $update_row['plate_name']; ?>" style="width:120px"/>
             	<span style="color:red;font-size: 1px">(*必填项)</span>
             </td>
         </tr>
@@ -92,14 +108,22 @@ while($row = $result->fetch_assoc()){
             		<option value="0">--请选择--</option>
             		<?php 
             			foreach ($info as $key => $val) {
+                            if($val['cno']==$update_row['class_id']){
             		?>
-					<option value="<?php echo $val['cno'] ?>">
-						<?php echo $val['classname'] ?>
-					</option>
+					<option value="<?php echo $val['cno'] ?>" selected>
+                        <?php echo $val['classname'] ?>
+                    </option>
+                    <?php 
+                        }else{
+                    ?>
+                    <option value="<?php echo $val['cno'] ?>">
+                        <?php echo $val['classname'] ?>
+                    </option>
             		<?php
-            			}
+            			}}
             		?>
             	</select>
+                <input type="hidden" id="id" name="id" value="<?php echo $id; ?>">
             	<input type="hidden" id="class_name" name="class_name" value="">
             	<span style="color:red;font-size: 1px">(*必选项)</span>
             </td>
