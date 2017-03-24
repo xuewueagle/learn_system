@@ -48,7 +48,7 @@ if ($mysqli->connect_errno) {
     return;
 }
 $mysqli->query("SET NAMES 'utf8'");
-$query = "SELECT * FROM db_javalearning.tb_plate where uid=$user_id;";
+$query = "SELECT * FROM db_javalearning.tb_plate where uid=$user_id";
 $result = $mysqli->query($query);
 if (!$result) {
     echo "SQL语句执行失败！";
@@ -83,19 +83,50 @@ while($row = $result->fetch_assoc()){
             <td class="haotd4"><?php echo $value['class_name']; ?></td>
             <td class="haotd4"><?php echo $value['posts_count']; ?></td>
             <td class="haotd4"><?php echo $time; ?></td>
-            <td class="haotd4"><a href="add_forum.php?id=<?php echo $value['id']; ?>">修改</a>|<a href="javascript:void(0)" onclick="del(<?php echo $value['id']; ?>)">删除</a></td>
+            <td class="haotd4"><a href="add_forum.php?id=<?php echo $value['id']; ?>">修改</a>|<a href="view_forum.php?del_id=<?php echo $value['id']; ?>" >删除</a></td>
         </tr>
         <?php
             }
         ?>
     </table>
 
+<?php 
+    
+    $del_id = isset($_GET['del_id']) ? $_GET['del_id'] :0;
+    if($del_id){
+        $query  = "delete  FROM db_javalearning.tb_plate where id=$del_id";
+        $result = $mysqli->query($query);
+        
+        if($result){
+            echo "<script>
+            layer.open({
+                content: '删除成功！',
+                yes: function(index, layero){
+                    window.location.href='view_forum.php';  
+                },
+                end: function(index){
+                    window.location.href='view_forum.php';    
+                }
+            });  
+            </script>";
+        }else{
+            echo "<script>
+            layer.open({
+                content: '删除失败！',
+                yes: function(index, layero){
+                    window.location.href='view_forum.php';  
+                },
+                end: function(index){
+                    window.location.href='view_forum.php';    
+                }
+            });  
+            </script>";
+        }
+    }
+        
+?>
+
 <?php
 include 'foot.php';
 ?>
 
-<script>
-    function del(id){
-        alert(id);
-    }
-</script>

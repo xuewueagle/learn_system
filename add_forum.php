@@ -69,15 +69,18 @@ while($row = $result->fetch_assoc()){
 		$class_name = isset($_POST['class_name']) ? trim($_POST['class_name']) : '';
 		$time = time();
         if($edit_id){ // 修改
-            //$querys = "insert into tb_plate values(null,".$user_id.",'".$plate_name."',".$class_id.",'".$class_name."',".$time.",0)";
+            $querys = "update tb_plate set plate_name='$plate_name',class_id=$class_id,class_name='$class_name',time='$time' where id=$edit_id";
+           
         }else{ // 添加
             $querys = "insert into tb_plate values(null,".$user_id.",'".$plate_name."',".$class_id.",'".$class_name."',".$time.",0)";
         }
+
 		
 		
 		$res = $mysqli->query($querys);
 		if($res){
-			header("Location: view_forum.php"); 
+			
+            echo "<script>window.location.href='view_forum.php';</script>";
 		}else{
 			exit('操作失败！');
 		}
@@ -88,7 +91,15 @@ while($row = $result->fetch_assoc()){
 <form method="POST" action="add_forum.php" id="frm">
     <table class="table" cellspacing="0">
         <tr style="height:40px;">
-            <td colspan="2" style="text-align: center;background-color: #8cb5c8"><span style="color: white;font-size: 18px;font-weight: bold;">添加版块</span></td>
+            <td colspan="2" style="text-align: center;background-color: #8cb5c8">
+                <?php  
+                    if($id){
+                ?>
+                <span style="color: white;font-size: 18px;font-weight: bold;">修改版块</span>
+                <?php }else{  ?>
+                <span style="color: white;font-size: 18px;font-weight: bold;">添加版块</span>
+                <?php }  ?>
+            </td>
         </tr>
         <tr class="haotr">
             <td class="haotd1"></td>
@@ -132,7 +143,7 @@ while($row = $result->fetch_assoc()){
         
         <tr style="height:80px">
             <td colspan="2" style="text-align: center">
-                <input type="button" name="add" id="add" value="添加"/>
+                <input type="button" name="add" id="add" value="提交"/>
             </td>
         </tr>
     </table>
