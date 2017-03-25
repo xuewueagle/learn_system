@@ -57,9 +57,9 @@ if ($mysqli->connect_errno) {
 $mysqli->query("SET NAMES 'utf8'");
 
 $type = isset($_GET['type']) ? $_GET['type'] :0;
-if($type==1){ // 学生
+if($role=='学生'){ // 学生
     $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_student as c on c.cno=p.class_id where c.sno=$user_id";
-}else if($type==2){// 老师
+}else if($role=='教师'){// 老师
     $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_class as c on c.cno=p.class_id where c.tno=$user_id";
     
 }
@@ -73,6 +73,7 @@ $info = array();
 while($row = $result->fetch_assoc()){
     $info[] = $row;
 }
+
 
 ?>
 
@@ -118,7 +119,7 @@ while($row = $result->fetch_assoc()){
 			<div style="width:580px;margin:0 auto;border:1px solid #f44336;margin-top:10px;margin-bottom:5px;"></div>
     		<div style="width:580px;margin-top:5px;margin-bottom:25px;display:none;" id="launch_form">
     			<form id="frm" method="post">
-    			<textarea name="reply" id="reply" cols="90" rows="4">
+    			<textarea name="reply" id="reply" style="width:576px;height:80px;">
     				
     			</textarea>
     			<button type="button" id="launch">发表</button>
@@ -141,8 +142,21 @@ while($row = $result->fetch_assoc()){
     			$('#launch_form').css('display','none');
     			$(obj).attr('status',1)
     		}
+            $('#rely_to_post_id').val(id);
     		
     	}
+
+        $('#launch').click(function(){
+            $.post(
+                "test.php", 
+                { "func": "getNameAndTime" },
+                function(data){
+                    alert(data.name); // John
+                    console.log(data.time); //  2pm
+                }, 
+                "json"
+            );
+        });
     </script>
         
    

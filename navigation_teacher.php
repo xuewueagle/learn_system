@@ -17,9 +17,9 @@
         if($admin==0){
 
     ?>
-    <a class='a1' href='view_post.php?type=2'<?php echo $choice === 10 ? "style='color:red'" : "" ?>>查看论坛帖子</a>
-    <a class='a1' href='add_post.php?type=2'<?php echo $choice === 11 ? "style='color:red'" : "" ?>>论坛发帖</a>
-    <a class='a1' href='view_mail.php?type=2'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信</a>
-    <a class='a1' href='send_mail.php?type=2'<?php echo $choice === 13 ? "style='color:red'" : "" ?>>发送站内信</a>
+    <a class='a1' href='view_post.php'<?php echo $choice === 10 ? "style='color:red'" : "" ?>>查看论坛帖子</a>
+    <a class='a1' href='add_post.php'<?php echo $choice === 11 ? "style='color:red'" : "" ?>>论坛发帖</a>
+    <a class='a1' href='view_mail.php'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信</a>
+    <a class='a1' href='send_mail.php'<?php echo $choice === 13 ? "style='color:red'" : "" ?>>发送站内信</a>
     <?php    }?>
 </div>
