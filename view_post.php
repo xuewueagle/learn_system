@@ -10,8 +10,15 @@ include 'head.php';
 $name = $_SESSION['name'];
 $admin = $_SESSION['admin'];
 $user_id = $_SESSION['user'];
+$role   = $_SESSION['lb'];
+if($role=='教师'){
+    $role_id=2;
+    include 'navigation_teacher.php';
+}else{
+    $role_id=1;
+    include 'navigation_student.php';
+}
 
-include 'navigation_teacher.php';
 ?>
 
 <style>
@@ -42,13 +49,21 @@ include 'navigation_teacher.php';
 </style>
 
 <?php
-/*@ $mysqli = new mysqli("127.0.0.1", "root", "123456", "db_javalearning", 3306);
+@ $mysqli = new mysqli("127.0.0.1", "root", "123456", "db_javalearning", 3306);
 if ($mysqli->connect_errno) {
     echo "不能连接到数据库<br/>";
     return;
 }
 $mysqli->query("SET NAMES 'utf8'");
-$query = "SELECT * FROM db_javalearning.tb_plate where uid=$user_id";
+
+$type = isset($_GET['type']) ? $_GET['type'] :0;
+if($type==1){ // 学生
+    $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_student as c on c.cno=p.class_id where c.sno=$user_id";
+}else if($type==2){// 老师
+    $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_class as c on c.cno=p.class_id where c.tno=$user_id";
+    
+}
+
 $result = $mysqli->query($query);
 if (!$result) {
     echo "SQL语句执行失败！";
@@ -57,7 +72,7 @@ if (!$result) {
 $info = array();
 while($row = $result->fetch_assoc()){
     $info[] = $row;
-}*/
+}
 
 ?>
 
@@ -65,18 +80,25 @@ while($row = $result->fetch_assoc()){
     <div style="width:600px;border:1px solid #8cb5c8;margin:0 auto;">
     	<div style="width:580px;margin:0 auto;">
 
-
+            <?php 
+                foreach ($info as $key => $value) {
+                
+                
+            ?>
     		<div style="width:580px;margin:0 auto;border:1px solid #dedede;margin-top:12px;"></div>
     		<div style="margin-top:5px;">
-    			<label for="">发帖人:发帖人</label>&nbsp;<label for="">标题。。。。</label>
+    			<label for="">发帖人:<b><?php echo $value['from_uname']; ?></b></label>&nbsp;<label for="" style="color:#4caf50"><?php echo $value['title']; ?></label>
     		</div>
     		<div>
     			<p style="text-indent:2em;">
-    				正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容
+    				<?php echo $value['content']; ?>
     			</p>
     			<div>
-    				<label for="">发布时间：2015年10月8日</label><a style="margin-left:5px;" href="javascript:void(0);" status="1" onclick="start_replay(1,this)">回复</a><label style="margin-left:212px;" for="">回复数：23</label><a style="margin-left:30px;" href="#">删除</a>
+    				<label for="">发布时间：<?php echo date('Y年m月d日',$value['post_time']); ?></label><a style="margin-left:5px;" href="javascript:void(0);" status="1" onclick="start_replay(<?php echo $value['id']; ?>,this)">回复</a><label for="" style="margin-left:25px;">所属版块：<b style="color:#ff5722"><?php echo $value['plate_name']; ?></b></label>
     			</div>
+                <div>
+                    <label style="margin-left:440px;" for="">回复数：<?php echo $value['reply_count']; ?></label><a style="margin-left:30px;" href="#">删除</a>
+                </div>
     			
     		</div>
     		<div style="width:580px;margin:0 auto;border:1px dashed #dedede;margin-bottom:5px;"></div>
@@ -86,29 +108,10 @@ while($row = $result->fetch_assoc()){
     		<div style="margin-left:20px;">
     			<label for="">回复时间：2015年10月8日</label>&nbsp;<a style="margin-left:322px;" href="#">删除</a>
     		</div>
+            <?php } ?>
 
 
-
-    		<div style="width:580px;margin:0 auto;border:1px solid #dedede;margin-top:12px;"></div>
-    		<div style="margin-top:5px;">
-    			<label for="">发帖人:发帖人</label>&nbsp;<label for="">标题。。。。</label>
-    		</div>
-    		<div>
-    			<p style="text-indent:2em;">
-    				正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容
-    			</p>
-    			<div>
-    				<label for="">发布时间：2015年10月8日</label><a style="margin-left:5px;" href="javascript:void(0);" status="1" onclick="start_replay(2,this)">回复</a><label style="margin-left:212px;" for="">回复数：23</label><a style="margin-left:30px;" href="#">删除</a>
-    			</div>
-    			
-    		</div>
-    		<div style="width:580px;margin:0 auto;border:1px dashed #dedede;margin-bottom:5px;"></div>
-    		<div style="margin-top:5px;margin-left:20px;">
-    			<label for="">回复人:回复人</label>&nbsp;<label for="">标题。。。。</label>
-    		</div>
-    		<div style="margin-left:20px;">
-    			<label for="">回复时间：2015年10月8日</label>&nbsp;<a style="margin-left:322px;" href="#">删除</a>
-    		</div>
+    		
 
 
 

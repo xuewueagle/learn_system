@@ -39,7 +39,12 @@ if ($mysqli->connect_errno) {
     return;
 }
 $mysqli->query("SET NAMES 'utf8'");
-$query = "SELECT cno,classname FROM db_javalearning.tb_class where tno=$user_id;";
+if($admin==1){ // 管理员
+    $query = "SELECT cno,classname FROM db_javalearning.tb_class";
+}else if($admin==0){ // 普通老师
+    $query = "SELECT cno,classname FROM db_javalearning.tb_class where tno=$user_id;";
+}
+
 $result = $mysqli->query($query);
 if (!$result) {
     echo "SQL语句执行失败！";

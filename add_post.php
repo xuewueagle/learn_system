@@ -13,12 +13,14 @@ $user_id = $_SESSION['user'];
 $role   = $_SESSION['lb'];
 if($role=='教师'){
 	$role_id=2;
+    include 'navigation_teacher.php';
 }else{
 	$role_id=1;
+    include 'navigation_student.php';
 }
 // [user] => 07001 [password] => zhanghua [name] => 张华 [lb] => 教师 [admin] => 0
 
-include 'navigation_teacher.php';
+
 ?>
 
 <style>
@@ -48,7 +50,13 @@ if ($mysqli->connect_errno) {
     return;
 }
 $mysqli->query("SET NAMES 'utf8'");
-$query = "SELECT id,plate_name FROM db_javalearning.tb_plate";
+$type = isset($_GET['type']) ? $_GET['type'] :0;
+if($type==1){ // 学生
+    $query = "SELECT p.id,p.plate_name FROM db_javalearning.tb_plate as p left join db_javalearning.tb_student as s on s.cno=p.class_id where s.sno=$user_id";
+}else if($type==2){// 老师
+    $query = "SELECT p.id,p.plate_name FROM db_javalearning.tb_plate as p left join db_javalearning.tb_class as c on p.class_id=c.cno left join db_javalearning.tb_teacher as t on c.tno=t.tno where t.tno=$user_id";
+}
+
 $result = $mysqli->query($query);
 if (!$result) {
     echo "SQL语句执行失败！";
