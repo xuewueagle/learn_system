@@ -133,26 +133,41 @@ while($row = $result->fetch_assoc()){
     <script>
     	function start_replay(id,obj){
     		var status = $(obj).attr('status');
-    		console.log(status);
     		$('#rely_to_post_id').val(id);
     		if(status==1){
     			$('#launch_form').css('display','block');
-    			$(obj).attr('status',0)
+    			$(obj).attr('status',0);
     		}else if(status==0){
     			$('#launch_form').css('display','none');
-    			$(obj).attr('status',1)
+    			$(obj).attr('status',1);
     		}
             $('#rely_to_post_id').val(id);
     		
     	}
 
         $('#launch').click(function(){
+            var rely_to_post_id = $('#rely_to_post_id').val();
+            var content = $('#reply').val();
+            var uid     = "<?php echo $user_id; ?>";
+            var name    = "<?php echo $name; ?>";
             $.post(
-                "test.php", 
-                { "func": "getNameAndTime" },
+                "reply_post.php", 
+                {
+                    "rely_to_post_id": rely_to_post_id,
+                    "content": content,
+                    "uid": uid,
+                    "name": name
+                },
                 function(data){
-                    alert(data.name); // John
-                    console.log(data.time); //  2pm
+                    
+                    if(data.status==1){
+                        window.location.href='view_post.php';
+                    }else{
+                        layer.alert(
+                            '回复发表失败！', 
+                            {title:'错误提示',icon: 5}
+                        );
+                    }
                 }, 
                 "json"
             );
