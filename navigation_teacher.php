@@ -19,7 +19,49 @@
     ?>
     <a class='a1' href='view_post.php'<?php echo $choice === 10 ? "style='color:red'" : "" ?>>查看论坛帖子</a>
     <a class='a1' href='add_post.php'<?php echo $choice === 11 ? "style='color:red'" : "" ?>>论坛发帖</a>
-    <a class='a1' id="message" href='view_mail.php'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信<marquee style="color:red;width:150px;display:none;">有新消息！</marquee></a>
+    <a class='a1' href='view_mail.php'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信<marquee id="message" style="color:red;width:150px;display:none;">有新消息！</marquee></a>
     <a class='a1' href='send_mail.php'<?php echo $choice === 13 ? "style='color:red'" : "" ?>>发送站内信</a>
     <?php    }?>
 </div>
+
+<script>
+    setInterval(function(){
+        // 当前时间与发送时间 比较 5分钟之内存在新增数据 站内提示 
+        // 用户点击查看站内信 隐藏提示
+        //alert('sdfsdf');
+        /*$.post(
+            "del.php", 
+            {
+                "id": id,
+                "type": type
+            },
+            function(data){
+                
+                if(data.status==1){
+                    layer.open({
+                        content: '删除成功！',
+                        icon: 6,
+                        yes: function(index, layero){
+                            window.location.href='view_post.php';  
+                        },
+                        end: function(index){
+                            window.location.href='view_post.php';    
+                        }
+                    });  
+                    
+                }else{
+                    layer.open({
+                        content: '删除失败！',
+                        icon: 5,
+                        yes: function(index, layero){   
+                        },
+                        end: function(index){ 
+                        }
+                    });  
+                }
+            }, 
+            "json"
+        );*/
+    },2000);
+
+</script>

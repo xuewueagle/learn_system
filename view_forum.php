@@ -10,7 +10,6 @@ include 'head.php';
 $name = $_SESSION['name'];
 $admin = $_SESSION['admin'];
 $user_id = $_SESSION['user'];
-
 include 'navigation_teacher.php';
 ?>
 

@@ -14,7 +14,7 @@ $role   = $_SESSION['lb'];
 if($role=='教师'){
 	$role_id=2;
     include 'navigation_teacher.php';
-}else{
+}else if($role=='学生'){
 	$role_id=1;
     include 'navigation_student.php';
 }
@@ -134,7 +134,7 @@ while($row = $result->fetch_assoc()){
         <tr class="haotr">
         	<td class="haotd1">内容</td>
             <td class="haotd2" style="text-align:center;">
-				<textarea name="content" id="content" cols="42" rows="6" style="margin-top:5px;">
+				<textarea name="content" id="content" style="margin-top:5px;width:280px;height:80px;">
 					
 				</textarea>
             </td>
