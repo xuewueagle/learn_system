@@ -73,7 +73,7 @@ while($self_row = $res->fetch_assoc()){
 				<?php echo $value['content']; ?>
 			</p>
 			<div>
-				<label style="margin-left:2px;" for="">来自于：<?php echo $value['from_name']; ?></label><label for="" style="margin-left:20px;">接收时间：<?php echo date('Y年m月d日',$value['send_time']); ?></label><a style="margin-left:200px;" href="javascript:void(0);" status="1" onclick="start_replay(1,this)">删除</a>
+				<label style="margin-left:2px;" for="">来自于：<?php echo $value['from_name']; ?></label><label for="" style="margin-left:20px;">接收时间：<?php echo date('Y年m月d日',$value['send_time']); ?></label><!-- <a style="margin-left:200px;" href="javascript:void(0);" status="1" onclick="start_replay(1,this)">删除</a> -->
 			</div>
 		</div>
 		<div style="width:580px;margin:0 auto;border:1px dashed #dedede;margin-bottom:10px;"></div>
@@ -95,7 +95,7 @@ while($self_row = $res->fetch_assoc()){
 				<?php echo $val['content']; ?>
 			</p>
 			<div>
-				<label style="margin-left:2px;" for="">发送者：当前用户</label><label for="" style="margin-left:20px;">发送时间：<?php echo date('Y年m月d日',$val['send_time']); ?></label><a style="margin-left:200px;" href="javascript:void(0);" status="1" onclick="start_replay(1,this)">删除</a>
+				<label style="margin-left:2px;" for="">发送者：当前用户</label><label for="" style="margin-left:20px;">发送时间：<?php echo date('Y年m月d日',$val['send_time']); ?></label><a style="margin-left:200px;" href="javascript:void(0);" onclick="start_del(<?php echo $val['id']; ?>,this,'private_message')">删除</a>
 			</div>
 		</div>
 		<div style="width:580px;margin:0 auto;border:1px dashed #dedede;margin-bottom:10px;"></div>
@@ -105,3 +105,44 @@ while($self_row = $res->fetch_assoc()){
 
 	</div>
 </div>
+
+<script>
+	
+	function start_del(id,obj,type){
+        $.post(
+            "del.php", 
+            {
+                "id": id,
+                "type": type
+            },
+            function(data){
+                
+                if(data.status==1){
+                    layer.open({
+                        content: '删除成功！',
+                        icon: 6,
+                        yes: function(index, layero){
+                            window.location.href='view_mail.php';  
+                        },
+                        end: function(index){
+                            window.location.href='view_mail.php';    
+                        }
+                    });  
+                    
+                }else{
+                    layer.open({
+                        content: '删除失败！',
+                        icon: 5,
+                        yes: function(index, layero){   
+                        },
+                        end: function(index){ 
+                        }
+                    });  
+                }
+            }, 
+            "json"
+        );
+
+    }
+</script>
+

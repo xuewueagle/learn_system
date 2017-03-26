@@ -13,6 +13,57 @@
     <!-- <a class='a1' href='#'<?php echo $choice === 7 ? "style='color:red'" : "" ?>>加入论坛</a> -->
     <a class='a1' href='view_post.php'<?php echo $choice === 10 ? "style='color:red'" : "" ?>>查看论坛帖子</a>
     <a class='a1' href='add_post.php'<?php echo $choice === 11 ? "style='color:red'" : "" ?>>论坛发帖</a>
-    <a class='a1' href='view_mail.php'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信<marquee id="message" style="color:red;width:150px;display:none;">有新消息！</marquee></a>
+
+    <a class='a1' id="view_p_message" href='view_mail.php'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信<b id="message"></b></a>
     <a class='a1' href='send_mail.php'<?php echo $choice === 13 ? "style='color:red'" : "" ?>>发送站内信</a>
 </div>
+
+<script>
+    var userId = "<?php echo $_SESSION['user']?>";
+    var roleId = "<?php echo $_SESSION['lb'];?>";
+    if(roleId == '教师'){
+        roleId = 2;
+    }else if(roleId == '学生'){
+        roleId = 1;
+    }
+
+    setInterval(function(){
+        // 当前时间与发送时间 比较 5分钟之内存在新增数据 站内提示 
+        // 用户点击查看站内信 隐藏提示
+        //alert('sdfsdf');
+
+        $.post(
+            "ajax_view_message.php", 
+            {
+                "to_uid": userId,
+                "to_role": roleId,
+                "type":'view'
+            },
+            function(data){
+                if(data.status==1){
+                    $('#message').empty();
+                    $('#message').append('<marquee id="message" style="color:red;" loop=5>您有新消息，请注意查收！</marquee>');
+                }
+            }, 
+            "json"
+        );
+    },5000);
+
+    $('#view_p_message').click(function(){
+        $.post(
+            "ajax_view_message.php", 
+            {
+                "to_uid": userId,
+                "to_role": roleId,
+                "type":'update'
+            },
+            function(data){
+                if(data.status==1){
+                    $('#message').empty();
+                }
+            }, 
+            "json"
+        );
+    });
+
+</script>

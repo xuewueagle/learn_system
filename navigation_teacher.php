@@ -19,49 +19,58 @@
     ?>
     <a class='a1' href='view_post.php'<?php echo $choice === 10 ? "style='color:red'" : "" ?>>查看论坛帖子</a>
     <a class='a1' href='add_post.php'<?php echo $choice === 11 ? "style='color:red'" : "" ?>>论坛发帖</a>
-    <a class='a1' href='view_mail.php'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信<marquee id="message" style="color:red;width:150px;display:none;">有新消息！</marquee></a>
+    <a class='a1' id="view_p_message" href='view_mail.php'<?php echo $choice === 12 ? "style='color:red'" : "" ?>>查看站内信<b id="message"></b></a>
     <a class='a1' href='send_mail.php'<?php echo $choice === 13 ? "style='color:red'" : "" ?>>发送站内信</a>
     <?php    }?>
 </div>
 
 <script>
+    var userId = "<?php echo $_SESSION['user']?>";
+    var roleId = "<?php echo $_SESSION['lb'];?>";
+    if(roleId == '教师'){
+        roleId = 2;
+    }else if(roleId == '学生'){
+        roleId = 1;
+    }
+
     setInterval(function(){
         // 当前时间与发送时间 比较 5分钟之内存在新增数据 站内提示 
         // 用户点击查看站内信 隐藏提示
         //alert('sdfsdf');
-        /*$.post(
-            "del.php", 
+
+        $.post(
+            "ajax_view_message.php", 
             {
-                "id": id,
-                "type": type
+                "to_uid": userId,
+                "to_role": roleId,
+                "type":'view'
             },
             function(data){
-                
+                console.log(data);
                 if(data.status==1){
-                    layer.open({
-                        content: '删除成功！',
-                        icon: 6,
-                        yes: function(index, layero){
-                            window.location.href='view_post.php';  
-                        },
-                        end: function(index){
-                            window.location.href='view_post.php';    
-                        }
-                    });  
-                    
-                }else{
-                    layer.open({
-                        content: '删除失败！',
-                        icon: 5,
-                        yes: function(index, layero){   
-                        },
-                        end: function(index){ 
-                        }
-                    });  
+                    $('#message').empty();
+                    $('#message').append('<marquee id="message" style="color:red;" loop=5>您有新消息，请注意查收！</marquee>');
                 }
             }, 
             "json"
-        );*/
-    },2000);
+        );
+    },5000);
+
+    $('#view_p_message').click(function(){
+        $.post(
+            "ajax_view_message.php", 
+            {
+                "to_uid": userId,
+                "to_role": roleId,
+                "type":'update'
+            },
+            function(data){
+                if(data.status==1){
+                    $('#message').empty();
+                }
+            }, 
+            "json"
+        );
+    });
 
 </script>

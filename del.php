@@ -13,6 +13,8 @@ if($type=='post'){
 	$mysqli->query($del_reply);
 }else if($type=='reply'){
 	$sql = "delete FROM db_javalearning.tb_reply where id=$id";
+}else if($type=='private_message'){
+	$sql = "delete FROM db_javalearning.tb_private_message where id=$id";
 }
 
 $result = $mysqli->query($sql);
