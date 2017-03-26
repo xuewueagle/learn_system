@@ -14,7 +14,7 @@ $role   = $_SESSION['lb'];
 if($role=='教师'){
     $role_id=2;
     include 'navigation_teacher.php';
-}else{
+}else if($role=='学生'){
     $role_id=1;
     include 'navigation_student.php';
 }
@@ -58,9 +58,9 @@ $mysqli->query("SET NAMES 'utf8'");
 
 $type = isset($_GET['type']) ? $_GET['type'] :0;
 if($role=='学生'){ // 学生
-    $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_student as c on c.cno=p.class_id where c.sno=$user_id";
+    $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.from_uid,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_student as c on c.cno=p.class_id where c.sno=$user_id";
 }else if($role=='教师'){// 老师
-    $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_class as c on c.cno=p.class_id where c.tno=$user_id";
+    $query = "SELECT o.id,o.title,o.content,o.post_time,o.from_uname,o.from_uid,o.role_id,o.reply_count,o.plate_name from db_javalearning.tb_posts as o left join db_javalearning.tb_plate as p on p.id=o.plate_id left join db_javalearning.tb_class as c on c.cno=p.class_id where c.tno=$user_id";
     
 }
 
@@ -72,6 +72,22 @@ if (!$result) {
 $info = array();
 while($row = $result->fetch_assoc()){
     $info[] = $row;
+}
+
+$reply_query = "SELECT * from db_javalearning.tb_reply";
+$reply_result = $mysqli->query($reply_query);
+$reply_results = array();
+while($row = $reply_result->fetch_assoc()){
+    $reply_results[] = $row;
+}
+
+
+foreach ($info as $key => $value) {
+    foreach ($reply_results as $k => $val) {
+        if($value['id'] == $val['post_id']){
+            $info[$key]['reply'][] = $val;
+        }
+    }
 }
 
 
@@ -98,17 +114,54 @@ while($row = $result->fetch_assoc()){
     				<label for="">发布时间：<?php echo date('Y年m月d日',$value['post_time']); ?></label><a style="margin-left:5px;" href="javascript:void(0);" status="1" onclick="start_replay(<?php echo $value['id']; ?>,this)">回复</a><label for="" style="margin-left:25px;">所属版块：<b style="color:#ff5722"><?php echo $value['plate_name']; ?></b></label>
     			</div>
                 <div>
-                    <label style="margin-left:440px;" for="">回复数：<?php echo $value['reply_count']; ?></label><a style="margin-left:30px;" href="#">删除</a>
+                    <label style="margin-left:427px;" for="">回复数：<?php echo $value['reply_count']; ?></label>
+                    <?php  
+                        if($role=='学生'){
+                            if($user_id==$value['from_uid']){
+                    ?>
+                    <a style="margin-left:15px;" href="javascript:void(0)" onclick="del(<?php echo $value['id']; ?>,this,'post')">删除</a>
+                    <?php 
+                            } 
+                        }else{
+                    ?>
+                    <a style="margin-left:15px;" href="javascript:void(0)" onclick="del(<?php echo $value['id']; ?>,this,'post')">删除</a>
+                    <?php  
+                        }
+                    ?>
+
                 </div>
     			
     		</div>
+            <?php 
+                if(isset($value['reply'])){
+                foreach ($value['reply'] as $val) {
+                    
+                
+            ?>
     		<div style="width:580px;margin:0 auto;border:1px dashed #dedede;margin-bottom:5px;"></div>
     		<div style="margin-top:5px;margin-left:20px;">
-    			<label for="">回复人:回复人</label>&nbsp;<label for="">标题。。。。</label>
+    			<label for="">回复人:<?php echo $val['uname']; ?></label>&nbsp;<label for=""><?php echo $val['content']; ?></label>
     		</div>
     		<div style="margin-left:20px;">
-    			<label for="">回复时间：2015年10月8日</label>&nbsp;<a style="margin-left:322px;" href="#">删除</a>
-    		</div>
+    			<label for="">回复时间：<?php echo date('Y年m月d日',$val['reply_time']); ?></label>
+    		    <?php  
+                    if($role=='学生'){
+                        if($user_id==$val['uid']){
+                ?>
+                <a style="margin-left:315px;" href="javascript:void(0)" onclick="del(<?php echo $val['id']; ?>,this,'reply')">删除</a>
+                <?php 
+                        } 
+                    }else{
+                ?>
+                <a style="margin-left:315px;" href="javascript:void(0)" onclick="del(<?php echo $val['id']; ?>,this,'reply')">删除</a>
+                <?php  
+                    }
+                ?>
+            </div>
+
+
+
+            <?php }} ?>
             <?php } ?>
 
 
@@ -172,6 +225,45 @@ while($row = $result->fetch_assoc()){
                 "json"
             );
         });
+
+        function del(id,obj,type){
+
+
+            $.post(
+                "del.php", 
+                {
+                    "id": id,
+                    "type": type
+                },
+                function(data){
+                    
+                    if(data.status==1){
+                        layer.open({
+                            content: '删除成功！',
+                            icon: 6,
+                            yes: function(index, layero){
+                                window.location.href='view_post.php';  
+                            },
+                            end: function(index){
+                                window.location.href='view_post.php';    
+                            }
+                        });  
+                        
+                    }else{
+                        layer.open({
+                            content: '删除失败！',
+                            icon: 5,
+                            yes: function(index, layero){   
+                            },
+                            end: function(index){ 
+                            }
+                        });  
+                    }
+                }, 
+                "json"
+            );
+
+        }
     </script>
         
    
