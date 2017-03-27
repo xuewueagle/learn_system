@@ -92,7 +92,7 @@ while($row = $result->fetch_assoc()){
 
         
         // 添加
-        $querys = "insert into tb_private_message values(null,'$title','$content',$from_uid,$from_role,'$from_name',$to_uid,$to_role,$send_time)";
+        $querys = "insert into db_javalearning.tb_private_message values (null,'$title','$content',$from_uid,$from_role,'$from_name',$to_uid,$to_role,$send_time,1)";
         
 		$res = $mysqli->query($querys);
 		if($res){

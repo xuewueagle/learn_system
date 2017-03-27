@@ -85,6 +85,7 @@ CREATE TABLE `tb_private_message` (
   `to_uid` int(11) DEFAULT NULL COMMENT '接收者ID',
   `to_role` int(11) DEFAULT NULL COMMENT '接收类型1：学生 2：教师',
   `send_time` int(11) DEFAULT NULL COMMENT '发送时间',
+  `status` int(11) DEFAULT NULL COMMENT '状态1：未查看 2：已查看',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='私信(站内信)表';
 
